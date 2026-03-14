@@ -34,7 +34,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (pathname !== '/onboarding') {
+  // 用 cookie 标记已完成 onboarding，避免 DB 查询挂住
+  const onboardingDone = request.cookies.get('onboarding_done')?.value === '1'
+
+  if (pathname !== '/onboarding' && !onboardingDone) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('onboarding_completed')
@@ -43,6 +46,10 @@ export async function middleware(request: NextRequest) {
 
     if (profile && !profile.onboarding_completed) {
       return NextResponse.redirect(new URL('/onboarding', request.url))
+    }
+    // DB 查不到或已完成，设置 cookie 避免下次重复查
+    if (profile?.onboarding_completed) {
+      supabaseResponse.cookies.set('onboarding_done', '1', { maxAge: 60 * 60 * 24 * 30 })
     }
   }
 

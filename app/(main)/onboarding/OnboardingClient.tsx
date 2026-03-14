@@ -21,23 +21,21 @@ export default function OnboardingPage() {
 
   async function complete(toChakin: boolean) {
     setLoading(true)
-    // 3秒超时保护，避免 Supabase 挂住
-    const timeout = setTimeout(() => {
-      router.push(toChakin ? '/checkin' : '/home')
-    }, 3000)
-    try {
-      const { data: { user } } = await supabase.auth.getUser()
-      if (user) {
-        const { EMOTION_LABELS } = await import('@/types')
-        try {
-          await supabase.from('profiles').update({
-            onboarding_completed: true,
-            emotion_preferences: selected.map(e => EMOTION_LABELS[e]),
-          }).eq('id', user.id)
-        } catch (_) {}
+    // 先后台更新 profile，不阻塞导航
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user) {
+        const labels: Record<string, string> = {
+          anxiety: '焦虑', empty: '空虚', low: '低落',
+          calm: '平静', happy: '愉悦', stressed: '压力', confused: '迷茫'
+        }
+        supabase.from('profiles').update({
+          onboarding_completed: true,
+          emotion_preferences: selected.map(e => labels[e] ?? e),
+        }).eq('id', session.user.id).then(() => {})
       }
-    } catch (_) {}
-    clearTimeout(timeout)
+    })
+    // 设置 cookie 让中间件放行，然后立即导航
+    document.cookie = 'onboarding_done=1; path=/; max-age=2592000'
     router.push(toChakin ? '/checkin' : '/home')
   }
 
