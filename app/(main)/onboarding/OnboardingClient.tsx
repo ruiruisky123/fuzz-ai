@@ -21,6 +21,10 @@ export default function OnboardingPage() {
 
   async function complete(toChakin: boolean) {
     setLoading(true)
+    // 3秒超时保护，避免 Supabase 挂住
+    const timeout = setTimeout(() => {
+      router.push(toChakin ? '/checkin' : '/home')
+    }, 3000)
     try {
       const { data: { user } } = await supabase.auth.getUser()
       if (user) {
@@ -30,17 +34,11 @@ export default function OnboardingPage() {
             onboarding_completed: true,
             emotion_preferences: selected.map(e => EMOTION_LABELS[e]),
           }).eq('id', user.id)
-        } catch (supabaseErr) {
-          console.error('Supabase error (will continue):', supabaseErr)
-        }
+        } catch (_) {}
       }
-      router.push(toChakin ? '/checkin' : '/home')
-    } catch (err) {
-      console.error('onboarding complete error:', err)
-      setLoading(false)
-      // 即使出错也允许用户继续
-      router.push(toChakin ? '/checkin' : '/home')
-    }
+    } catch (_) {}
+    clearTimeout(timeout)
+    router.push(toChakin ? '/checkin' : '/home')
   }
 
   const steps = [
