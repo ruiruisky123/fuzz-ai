@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+    --radius: 0.5rem;
+    
+    /* Fuzz 自定义颜色 */
+    --fuzz-primary: #F4B942;
+    --fuzz-primary-hover: #E8A832;
+    --fuzz-accent: #E8963A;
+    --fuzz-bg: #FEFCF5;
+    --fuzz-bg-card: #FFFDF0;
+    --fuzz-bg-input: #FFF9E6;
+    --fuzz-text-primary: #2C2416;
+    --fuzz-text-secondary: #7A6A52;
+    --fuzz-text-muted: #B5A48A;
+    --fuzz-border: #E8DFC8;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+/* Fuzz 自定义样式 */
+.btn-primary {
+  background: #F4B942;
+  border: 2px solid #2C2416;
+  border-radius: 20px;
+  box-shadow: 3px 3px 0 #2C2416;
+  transition: all 0.15s ease;
+  font-family: var(--font-body), 'Noto Sans SC', sans-serif;
+}
+
+.btn-primary:active {
+  box-shadow: 1px 1px 0 #2C2416;
+  transform: translate(2px, 2px);
+}
+
+.card-doodle {
+  background: #FFFDF0;
+  border: 1.5px solid #E8DFC8;
+  border-radius: 24px;
+  box-shadow: 0 2px 12px rgba(244, 185, 66, 0.12);
+}
